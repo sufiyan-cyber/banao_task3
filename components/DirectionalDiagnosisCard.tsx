@@ -1,6 +1,6 @@
 import React from 'react';
 import { DirectionalDiagnosis, ColorDifferenceMetrics } from '@/lib/color/lab';
-import { AlertTriangle, CheckCircle2, Info, ArrowDown, ArrowUp, ArrowRight, ArrowLeft } from 'lucide-react';
+import { CheckCircle2, AlertTriangle, Info } from 'lucide-react';
 
 interface DirectionalDiagnosisCardProps {
   diagnosis: DirectionalDiagnosis;
@@ -8,74 +8,88 @@ interface DirectionalDiagnosisCardProps {
 }
 
 export function DirectionalDiagnosisCard({ diagnosis, metrics }: DirectionalDiagnosisCardProps) {
-  const { isOverallPass, deltaE00, deltaGloss } = metrics;
+  const { isOverallPass } = metrics;
 
   return (
-    <div className="industrial-card overflow-hidden">
+    <div className="serif-card overflow-hidden">
       <div className="industrial-header">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5">
           {isOverallPass ? (
-            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+            <CheckCircle2 className="w-4 h-4 text-[#2D6A4F]" />
           ) : (
-            <AlertTriangle className="w-4 h-4 text-amber-600" />
+            <AlertTriangle className="w-4 h-4 text-[#B8860B]" />
           )}
-          <span>Directional Diagnosis (QC Shift Assessment)</span>
+          <span className="font-serif font-semibold text-sm text-[#1A1A1A]">
+            Directional Diagnosis (QC Shift Assessment)
+          </span>
         </div>
         <span
-          className={`text-[11px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${
+          className={`small-caps text-[10px] px-2.5 py-0.5 rounded border ${
             isOverallPass
-              ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+              ? 'bg-[#EBF5EE] text-[#2D6A4F] border-[#B7E4C7]'
               : diagnosis.severity === 'CRITICAL_DEVIATION'
-              ? 'bg-rose-50 text-rose-800 border-rose-200'
-              : 'bg-amber-50 text-amber-800 border-amber-200'
+              ? 'bg-[#FCECEE] text-[#9B2226] border-[#F5C2C7]'
+              : 'bg-[#FFF8E7] text-[#9D4E00] border-[#F2D0A4]'
           }`}
         >
           {diagnosis.severity.replace('_', ' ')}
         </span>
       </div>
 
-      <div className="p-4 space-y-4">
-        {/* Narrative Box */}
-        <div className="p-3 bg-slate-50 border border-slate-200 rounded text-sm text-slate-800 leading-relaxed flex items-start gap-2.5">
-          <Info className="w-4 h-4 text-blue-600 shrink-0 mt-0.5" />
+      <div className="p-5 space-y-4">
+        {/* Narrative Box with Editorial Quote Styling */}
+        <div className="p-4 bg-[#FAF8F5] border border-[#E8E4DF] rounded-md text-sm text-[#1A1A1A] leading-relaxed flex items-start gap-3">
+          <Info className="w-4 h-4 text-[#B8860B] shrink-0 mt-0.5" />
           <div>
-            <div className="font-semibold text-slate-900 mb-0.5">Physical Deviation Diagnosis:</div>
-            <div>{diagnosis.narrative}</div>
+            <div className="small-caps text-[10px] text-[#A39B8E] mb-1">
+              Physical Deviation Assessment
+            </div>
+            <div className="font-serif text-[#1A1A1A] text-sm italic">
+              &ldquo;{diagnosis.narrative}&rdquo;
+            </div>
           </div>
         </div>
 
         {/* 4 Vector Axis Breakdown */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="p-2.5 bg-white border border-slate-200 rounded">
-            <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Lightness (L*)</span>
-            <div className="text-sm font-semibold text-slate-900 flex items-center justify-between">
-              <span>{diagnosis.lightnessSummary}</span>
+          <div className="p-3 bg-white border border-[#E8E4DF] rounded-md">
+            <span className="small-caps text-[9px] text-[#A39B8E] block mb-1">Lightness (L*)</span>
+            <div className="font-serif text-sm font-semibold text-[#1A1A1A]">
+              {diagnosis.lightnessSummary}
             </div>
-            <div className="text-[11px] font-mono text-slate-500 mt-1">ΔL: {metrics.deltaL > 0 ? `+${metrics.deltaL}` : metrics.deltaL}</div>
+            <div className="text-[11px] font-mono text-[#6B6B6B] mt-1">
+              ΔL: {metrics.deltaL > 0 ? `+${metrics.deltaL}` : metrics.deltaL}
+            </div>
           </div>
 
-          <div className="p-2.5 bg-white border border-slate-200 rounded">
-            <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Red-Green (a*)</span>
-            <div className="text-sm font-semibold text-slate-900 flex items-center justify-between">
-              <span>{diagnosis.aSummary}</span>
+          <div className="p-3 bg-white border border-[#E8E4DF] rounded-md">
+            <span className="small-caps text-[9px] text-[#A39B8E] block mb-1">Red-Green (a*)</span>
+            <div className="font-serif text-sm font-semibold text-[#1A1A1A]">
+              {diagnosis.aSummary}
             </div>
-            <div className="text-[11px] font-mono text-slate-500 mt-1">Δa: {metrics.deltaA > 0 ? `+${metrics.deltaA}` : metrics.deltaA}</div>
+            <div className="text-[11px] font-mono text-[#6B6B6B] mt-1">
+              Δa: {metrics.deltaA > 0 ? `+${metrics.deltaA}` : metrics.deltaA}
+            </div>
           </div>
 
-          <div className="p-2.5 bg-white border border-slate-200 rounded">
-            <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Yellow-Blue (b*)</span>
-            <div className="text-sm font-semibold text-slate-900 flex items-center justify-between">
-              <span>{diagnosis.bSummary}</span>
+          <div className="p-3 bg-white border border-[#E8E4DF] rounded-md">
+            <span className="small-caps text-[9px] text-[#A39B8E] block mb-1">Yellow-Blue (b*)</span>
+            <div className="font-serif text-sm font-semibold text-[#1A1A1A]">
+              {diagnosis.bSummary}
             </div>
-            <div className="text-[11px] font-mono text-slate-500 mt-1">Δb: {metrics.deltaB > 0 ? `+${metrics.deltaB}` : metrics.deltaB}</div>
+            <div className="text-[11px] font-mono text-[#6B6B6B] mt-1">
+              Δb: {metrics.deltaB > 0 ? `+${metrics.deltaB}` : metrics.deltaB}
+            </div>
           </div>
 
-          <div className="p-2.5 bg-white border border-slate-200 rounded">
-            <span className="text-[10px] uppercase font-bold text-slate-400 block mb-1">Surface Finish</span>
-            <div className="text-sm font-semibold text-slate-900 flex items-center justify-between">
-              <span>{diagnosis.glossSummary}</span>
+          <div className="p-3 bg-white border border-[#E8E4DF] rounded-md">
+            <span className="small-caps text-[9px] text-[#A39B8E] block mb-1">Surface Finish</span>
+            <div className="font-serif text-sm font-semibold text-[#1A1A1A]">
+              {diagnosis.glossSummary}
             </div>
-            <div className="text-[11px] font-mono text-slate-500 mt-1">ΔGloss: {metrics.deltaGloss > 0 ? `+${metrics.deltaGloss}` : metrics.deltaGloss} GU</div>
+            <div className="text-[11px] font-mono text-[#6B6B6B] mt-1">
+              ΔGloss: {metrics.deltaGloss > 0 ? `+${metrics.deltaGloss}` : metrics.deltaGloss} GU
+            </div>
           </div>
         </div>
       </div>

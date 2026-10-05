@@ -5,22 +5,17 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ColorSwatch } from '@/components/ColorSwatch';
 import { JevDecisionCard } from '@/components/JevDecisionCard';
-import { TimeComparisonCard } from '@/components/TimeComparisonCard';
 import {
   ShieldCheck,
   CheckCircle2,
   AlertTriangle,
   XCircle,
   ShieldAlert,
-  ArrowRight,
   RefreshCw,
   Sliders,
   Sparkles,
   FileCheck,
   Cpu,
-  Layers,
-  Clock,
-  Send,
 } from 'lucide-react';
 import { CONFIG } from '@/lib/config';
 
@@ -56,7 +51,6 @@ export default function QCApprovalPage({ params }: { params: { id: string } }) {
     loadBatch();
   }, [id]);
 
-  // QC Decision Action (Approve, Reject, Escalate)
   const handleQCDecision = async (action: 'APPROVE' | 'REJECT' | 'ESCALATE') => {
     setActionLoading(true);
     setError(null);
@@ -82,7 +76,6 @@ export default function QCApprovalPage({ params }: { params: { id: string } }) {
     }
   };
 
-  // Simulate Verification
   const handleSimulateVerification = async () => {
     setActionLoading(true);
     setError(null);
@@ -102,7 +95,6 @@ export default function QCApprovalPage({ params }: { params: { id: string } }) {
     }
   };
 
-  // Release Batch
   const handleReleaseBatch = async () => {
     setActionLoading(true);
     setError(null);
@@ -125,19 +117,19 @@ export default function QCApprovalPage({ params }: { params: { id: string } }) {
 
   if (loading) {
     return (
-      <div className="industrial-card p-12 text-center text-slate-500 space-y-3">
-        <RefreshCw className="w-6 h-6 animate-spin mx-auto text-blue-600" />
-        <p className="text-sm font-medium">Loading QC approval portal...</p>
+      <div className="serif-card p-12 text-center text-[#6B6B6B] space-y-3">
+        <RefreshCw className="w-6 h-6 animate-spin mx-auto text-[#B8860B]" />
+        <p className="font-serif italic text-sm">Loading atelier QC approval portal...</p>
       </div>
     );
   }
 
   if (error && !batch) {
     return (
-      <div className="industrial-card p-8 text-center text-rose-700 bg-rose-50 border-rose-200 space-y-3">
-        <AlertTriangle className="w-8 h-8 mx-auto text-rose-600" />
-        <h2 className="text-base font-bold">Error</h2>
-        <p className="text-sm">{error}</p>
+      <div className="serif-card p-8 text-center text-[#9B2226] bg-[#FCECEE] border-[#F5C2C7] space-y-3">
+        <AlertTriangle className="w-8 h-8 mx-auto text-[#9B2226]" />
+        <h2 className="font-serif font-bold text-base">Error</h2>
+        <p className="text-sm font-sans">{error}</p>
         <Link href="/dashboard" className="btn-secondary text-xs inline-block mt-2">
           Back to Dashboard
         </Link>
@@ -165,37 +157,37 @@ export default function QCApprovalPage({ params }: { params: { id: string } }) {
   const isEscalated = batch.status === 'ESCALATED';
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* QC Approval Header */}
-      <div className="industrial-card p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="serif-card p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t-2 border-t-[#B8860B]">
         <div>
           <div className="flex items-center gap-3">
-            <h1 className="text-lg font-bold font-mono text-slate-900 flex items-center gap-2">
-              <ShieldCheck className="w-5 h-5 text-blue-600" />
+            <h1 className="text-xl font-serif font-bold text-[#1A1A1A] flex items-center gap-2">
+              <ShieldCheck className="w-5 h-5 text-[#B8860B]" />
               <span>QC Approval & Verification: {batch.batchNumber}</span>
             </h1>
-            <span className="text-xs bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-mono border border-slate-200">
+            <span className="small-caps text-[10px] bg-[#FAF8F5] text-[#6B6B6B] px-2 py-0.5 rounded border border-[#E8E4DF]">
               Loop {batch.currentLoop} of {batch.maxLoops}
             </span>
           </div>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-[#6B6B6B] mt-1 font-sans">
             Human-in-the-loop review. Operator approval is strictly required before printer profile deployment.
           </p>
         </div>
 
         <div className="flex items-center gap-2.5">
-          <span className="text-xs uppercase font-bold text-slate-500">Current Stage:</span>
+          <span className="small-caps text-[10px] text-[#A39B8E]">Current Stage:</span>
           <span
-            className={`text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded border ${
+            className={`small-caps text-[10px] px-2.5 py-1 rounded border ${
               isReleased
-                ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                ? 'bg-[#EBF5EE] text-[#2D6A4F] border-[#B7E4C7]'
                 : isEscalated
-                ? 'bg-rose-100 text-rose-800 border-rose-300'
+                ? 'bg-[#FCECEE] text-[#9B2226] border-[#F5C2C7]'
                 : isVerifiedPass
-                ? 'bg-purple-100 text-purple-800 border-purple-300'
+                ? 'bg-[#F3E8FF] text-[#6B21A8] border-[#E9D5FF]'
                 : isApproved
-                ? 'bg-blue-100 text-blue-800 border-blue-300'
-                : 'bg-amber-100 text-amber-800 border-amber-300'
+                ? 'bg-[#EBF3FA] text-[#1D3557] border-[#A8DADC]'
+                : 'bg-[#FFF8E7] text-[#9D4E00] border-[#F2D0A4]'
             }`}
           >
             {batch.status.replace(/_/g, ' ')}
@@ -204,75 +196,78 @@ export default function QCApprovalPage({ params }: { params: { id: string } }) {
       </div>
 
       {error && (
-        <div className="p-3 bg-rose-50 border border-rose-200 rounded text-xs text-rose-800 flex items-center gap-2">
-          <AlertTriangle className="w-4 h-4 shrink-0 text-rose-600" />
+        <div className="p-4 bg-[#FCECEE] border border-[#F5C2C7] rounded-md text-xs text-[#9B2226] flex items-center gap-2">
+          <AlertTriangle className="w-4 h-4 shrink-0 text-[#9B2226]" />
           <span>{error}</span>
         </div>
       )}
 
       {/* FINAL VALUE SCREEN (PRD Section 30) - Displayed when batch is released */}
       {isReleased && (
-        <div className="industrial-card p-6 bg-gradient-to-br from-emerald-50 to-white border-emerald-300 space-y-4 shadow-sm">
-          <div className="flex items-center justify-between border-b border-emerald-200 pb-3">
-            <div className="flex items-center gap-2">
-              <CheckCircle2 className="w-6 h-6 text-emerald-600" />
+        <div className="serif-card p-8 bg-[#FAF8F5] border-2 border-[#B8860B] space-y-6 shadow-md relative overflow-hidden">
+          {/* Subtle decorative gold line */}
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#B8860B] via-[#D4A84B] to-[#B8860B]" />
+
+          <div className="flex items-center justify-between border-b border-[#E8E4DF] pb-4">
+            <div className="flex items-center gap-3">
+              <CheckCircle2 className="w-6 h-6 text-[#2D6A4F]" />
               <div>
-                <h2 className="text-base font-bold text-emerald-950 tracking-tight">
+                <h2 className="text-xl font-serif font-bold text-[#1A1A1A] tracking-tight">
                   BATCH APPROVED & RELEASED TO PRODUCTION
                 </h2>
-                <p className="text-xs text-emerald-700">
-                  Fired tile meets all CIEDE2000 and surface gloss acceptance criteria.
+                <p className="text-xs text-[#6B6B6B] font-sans mt-0.5">
+                  Fired ceramic tile conforms to all CIEDE2000 and specular gloss master tolerances.
                 </p>
               </div>
             </div>
-            <span className="text-[11px] font-mono bg-emerald-100 text-emerald-800 border border-emerald-300 px-2 py-1 rounded font-bold">
-              Prototype Result
+            <span className="small-caps text-[10px] bg-white text-[#B8860B] border border-[#B8860B]/40 px-3 py-1 rounded font-bold shadow-sm">
+              Prototype Verification Complete
             </span>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-            <div className="bg-white border border-emerald-200 rounded p-3">
-              <span className="text-[10px] uppercase font-bold text-slate-400 block">Manual Process Time</span>
-              <div className="text-xl font-bold font-mono text-rose-600 mt-1">~6–7 Hours</div>
-              <span className="text-[10px] text-slate-500">6–7 trial firings</span>
+            <div className="bg-white border border-[#E8E4DF] rounded-md p-4 shadow-sm">
+              <span className="small-caps text-[9px] text-[#A39B8E] block">Manual Process Time</span>
+              <div className="text-2xl font-serif font-bold text-[#C85A32] mt-1">~6–7 Hours</div>
+              <span className="text-[10px] text-[#6B6B6B] font-sans">6–7 trial firings</span>
             </div>
-            <div className="bg-white border border-emerald-200 rounded p-3">
-              <span className="text-[10px] uppercase font-bold text-slate-400 block">ShadePilot Workflow</span>
-              <div className="text-xl font-bold font-mono text-emerald-600 mt-1">
+            <div className="bg-white border border-[#E8E4DF] rounded-md p-4 shadow-sm border-t-2 border-t-[#B8860B]">
+              <span className="small-caps text-[9px] text-[#B8860B] block font-semibold">ShadePilot Workflow</span>
+              <div className="text-2xl font-serif font-bold text-[#2D6A4F] mt-1">
                 {releaseSummary?.prototypeWorkflowTime || '3m 48s'}
               </div>
-              <span className="text-[10px] text-slate-500">1 correction loop</span>
+              <span className="text-[10px] text-[#6B6B6B] font-sans">1 correction loop</span>
             </div>
-            <div className="bg-white border border-emerald-200 rounded p-3">
-              <span className="text-[10px] uppercase font-bold text-slate-400 block">Final Fired ΔE00</span>
-              <div className="text-xl font-bold font-mono text-emerald-700 mt-1">
+            <div className="bg-white border border-[#E8E4DF] rounded-md p-4 shadow-sm">
+              <span className="small-caps text-[9px] text-[#A39B8E] block">Final Fired ΔE00</span>
+              <div className="text-2xl font-serif font-bold text-[#2D6A4F] mt-1">
                 {verificationSample?.deltaE00?.toFixed(2) || '0.81'}
               </div>
-              <span className="text-[10px] text-emerald-600 font-medium">&lt;= 1.0 (Pass)</span>
+              <span className="text-[10px] text-[#2D6A4F] font-sans font-medium">&lt;= 1.0 (Pass)</span>
             </div>
-            <div className="bg-white border border-emerald-200 rounded p-3">
-              <span className="text-[10px] uppercase font-bold text-slate-400 block">Turnaround Time Saved</span>
-              <div className="text-xl font-bold font-mono text-blue-700 mt-1">
+            <div className="bg-white border border-[#E8E4DF] rounded-md p-4 shadow-sm">
+              <span className="small-caps text-[9px] text-[#A39B8E] block">Turnaround Time Saved</span>
+              <div className="text-2xl font-serif font-bold text-[#B8860B] mt-1">
                 ≈ {releaseSummary?.estimatedTimeSaved || '6.4 hours'}
               </div>
-              <span className="text-[10px] text-slate-500">Per changeover</span>
+              <span className="text-[10px] text-[#6B6B6B] font-sans">Per changeover</span>
             </div>
           </div>
 
-          <p className="text-[11px] text-emerald-800 italic text-center">
+          <p className="text-xs text-[#6B6B6B] italic text-center font-serif">
             *Demonstration result based on simulated kiln verification and synthetic response models.
           </p>
         </div>
       )}
 
-      {/* Escalation Notice if batch was escalated */}
+      {/* Escalation Notice */}
       {isEscalated && (
-        <div className="industrial-card p-5 bg-rose-50 border-rose-300 space-y-2 text-rose-950">
-          <div className="flex items-center gap-2 font-bold text-sm text-rose-900">
-            <ShieldAlert className="w-5 h-5 text-rose-600" />
+        <div className="serif-card p-6 bg-[#FCECEE] border-[#F5C2C7] space-y-2 text-[#9B2226]">
+          <div className="flex items-center gap-2.5 font-serif font-bold text-base">
+            <ShieldAlert className="w-5 h-5 text-[#9B2226]" />
             <span>Batch Escalated to Plant Quality & Process Engineering</span>
           </div>
-          <p className="text-xs text-rose-800 leading-relaxed">
+          <p className="text-xs text-[#9B2226] leading-relaxed font-sans">
             The shade correction exceeds printer limits or max correction iterations. The batch has been locked. Plant investigations should inspect glaze batch viscosity, raw slip variation, or kiln firing zone temperature curves.
           </p>
         </div>
@@ -296,66 +291,68 @@ export default function QCApprovalPage({ params }: { params: { id: string } }) {
 
       {/* System Recommendation & Channel Adjustments */}
       {recommendedCorrection && (
-        <div className="industrial-card p-5 space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-            <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <Sliders className="w-4 h-4 text-blue-600" />
-              <span>Recommended Printer Correction (Calibrated 6-Channel Offsets)</span>
-            </h2>
-            <span className="text-xs text-slate-500 font-mono">
-              Confidence: <strong>{(recommendedCorrection.confidence * 100).toFixed(0)}%</strong>
+        <div className="serif-card p-6 space-y-5 border-t-2 border-t-[#B8860B]">
+          <div className="flex items-center justify-between border-b border-[#E8E4DF] pb-3">
+            <div className="flex items-center gap-2.5">
+              <Sliders className="w-4 h-4 text-[#B8860B]" />
+              <h2 className="font-serif font-bold text-base text-[#1A1A1A]">
+                Recommended Printer Correction (Calibrated 6-Channel Offsets)
+              </h2>
+            </div>
+            <span className="small-caps text-[10px] text-[#6B6B6B]">
+              Confidence: <strong className="text-[#1A1A1A]">{(recommendedCorrection.confidence * 100).toFixed(0)}%</strong>
             </span>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-6 gap-3 text-center">
-            <div className="bg-slate-50 border border-slate-200 rounded p-2.5">
-              <span className="text-[10px] uppercase font-bold text-slate-500 block">Brown</span>
-              <span className="text-base font-bold font-mono text-slate-900 block mt-0.5">
+            <div className="bg-[#FAF8F5] border border-[#E8E4DF] rounded-md p-3">
+              <span className="small-caps text-[9px] text-[#A39B8E] block">Brown</span>
+              <span className="text-lg font-serif font-bold text-[#1A1A1A] block mt-1">
                 {recommendedCorrection.brownDelta > 0 ? `+${recommendedCorrection.brownDelta.toFixed(1)}%` : `${recommendedCorrection.brownDelta.toFixed(1)}%`}
               </span>
             </div>
-            <div className="bg-slate-50 border border-slate-200 rounded p-2.5">
-              <span className="text-[10px] uppercase font-bold text-slate-500 block">Yellow</span>
-              <span className="text-base font-bold font-mono text-slate-900 block mt-0.5">
+            <div className="bg-[#FAF8F5] border border-[#E8E4DF] rounded-md p-3">
+              <span className="small-caps text-[9px] text-[#A39B8E] block">Yellow</span>
+              <span className="text-lg font-serif font-bold text-[#1A1A1A] block mt-1">
                 {recommendedCorrection.yellowDelta > 0 ? `+${recommendedCorrection.yellowDelta.toFixed(1)}%` : `${recommendedCorrection.yellowDelta.toFixed(1)}%`}
               </span>
             </div>
-            <div className="bg-slate-50 border border-slate-200 rounded p-2.5">
-              <span className="text-[10px] uppercase font-bold text-slate-500 block">Black</span>
-              <span className="text-base font-bold font-mono text-slate-900 block mt-0.5">
+            <div className="bg-[#FAF8F5] border border-[#E8E4DF] rounded-md p-3">
+              <span className="small-caps text-[9px] text-[#A39B8E] block">Black</span>
+              <span className="text-lg font-serif font-bold text-[#1A1A1A] block mt-1">
                 {recommendedCorrection.blackDelta > 0 ? `+${recommendedCorrection.blackDelta.toFixed(1)}%` : `${recommendedCorrection.blackDelta.toFixed(1)}%`}
               </span>
             </div>
-            <div className="bg-slate-50 border border-slate-200 rounded p-2.5">
-              <span className="text-[10px] uppercase font-bold text-slate-400 block">Red</span>
-              <span className="text-base font-bold font-mono text-slate-700 block mt-0.5">
+            <div className="bg-[#FAF8F5] border border-[#E8E4DF] rounded-md p-3">
+              <span className="small-caps text-[9px] text-[#A39B8E] block">Red</span>
+              <span className="text-lg font-serif font-bold text-[#6B6B6B] block mt-1">
                 {recommendedCorrection.redDelta > 0 ? `+${recommendedCorrection.redDelta.toFixed(1)}%` : `${recommendedCorrection.redDelta.toFixed(1)}%`}
               </span>
             </div>
-            <div className="bg-slate-50 border border-slate-200 rounded p-2.5">
-              <span className="text-[10px] uppercase font-bold text-slate-400 block">Blue</span>
-              <span className="text-base font-bold font-mono text-slate-700 block mt-0.5">
+            <div className="bg-[#FAF8F5] border border-[#E8E4DF] rounded-md p-3">
+              <span className="small-caps text-[9px] text-[#A39B8E] block">Blue</span>
+              <span className="text-lg font-serif font-bold text-[#6B6B6B] block mt-1">
                 {recommendedCorrection.blueDelta > 0 ? `+${recommendedCorrection.blueDelta.toFixed(1)}%` : `${recommendedCorrection.blueDelta.toFixed(1)}%`}
               </span>
             </div>
-            <div className="bg-slate-50 border border-slate-200 rounded p-2.5">
-              <span className="text-[10px] uppercase font-bold text-slate-400 block">Other</span>
-              <span className="text-base font-bold font-mono text-slate-700 block mt-0.5">
+            <div className="bg-[#FAF8F5] border border-[#E8E4DF] rounded-md p-3">
+              <span className="small-caps text-[9px] text-[#A39B8E] block">Other</span>
+              <span className="text-lg font-serif font-bold text-[#6B6B6B] block mt-1">
                 {recommendedCorrection.otherDelta > 0 ? `+${recommendedCorrection.otherDelta.toFixed(1)}%` : `${recommendedCorrection.otherDelta.toFixed(1)}%`}
               </span>
             </div>
           </div>
 
-          <div className="bg-blue-50 border border-blue-200 rounded p-3 text-xs flex flex-wrap items-center justify-between gap-3 text-blue-900">
+          <div className="bg-[#FAF8F5] border border-[#E8E4DF] rounded-md p-3.5 text-xs flex flex-wrap items-center justify-between gap-3 text-[#1A1A1A] font-sans">
             <div>
-              <strong>Predicted Residual Outcome: </strong>
+              <strong className="font-serif">Predicted Outcome: </strong>
               <span>
-                ΔE00: <strong className="font-mono text-blue-950">{recommendedCorrection.predictedDeltaE00.toFixed(2)}</strong> (Tolerance &lt;= 1.0) | Predicted Gloss Difference:{' '}
-                <strong className="font-mono text-blue-950">{recommendedCorrection.predictedDeltaGloss.toFixed(1)} GU</strong>
+                ΔE00: <strong className="font-serif font-bold">{recommendedCorrection.predictedDeltaE00.toFixed(2)}</strong> (Tolerance &lt;= 1.0) | Gloss Difference:{' '}
+                <strong className="font-serif font-bold">{recommendedCorrection.predictedDeltaGloss.toFixed(1)} GU</strong>
               </span>
             </div>
             {batch.revisedPrinterReference && (
-              <div className="font-mono bg-white px-2 py-0.5 rounded border border-blue-200 text-blue-800 font-bold">
+              <div className="font-mono bg-white px-2.5 py-1 rounded border border-[#E8E4DF] text-[#B8860B] font-bold text-xs">
                 Profile: {batch.revisedPrinterReference}
               </div>
             )}
@@ -371,14 +368,14 @@ export default function QCApprovalPage({ params }: { params: { id: string } }) {
 
       {/* STAGE 1: QC OPERATOR APPROVAL ACTIONS */}
       {!isApproved && !isEscalated && (
-        <div className="industrial-card p-5 space-y-4 bg-slate-50">
-          <h3 className="text-sm font-bold text-slate-900">Human QC Approval Action</h3>
-          <p className="text-xs text-slate-600">
+        <div className="serif-card p-6 space-y-4 bg-[#FAF8F5]">
+          <h3 className="font-serif font-bold text-base text-[#1A1A1A]">Human QC Approval Action</h3>
+          <p className="text-xs text-[#6B6B6B] font-sans">
             Review the objective recommendation and Jev risk evaluation. Operator decision must be confirmed before printer file generation.
           </p>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 mb-1">
+            <label className="block small-caps text-[10px] text-[#6B6B6B] mb-1.5">
               QC Approval Notes (Optional)
             </label>
             <input
@@ -386,7 +383,7 @@ export default function QCApprovalPage({ params }: { params: { id: string } }) {
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="e.g. Visual confirmation passed; standard shift changeover."
-              className="w-full text-xs border border-slate-300 rounded px-3 py-2 bg-white text-slate-800 focus:outline-blue-600"
+              className="w-full text-xs border border-[#E8E4DF] rounded-md px-3.5 py-2.5 bg-white text-[#1A1A1A] focus:outline-[#B8860B]"
             />
           </div>
 
@@ -395,17 +392,17 @@ export default function QCApprovalPage({ params }: { params: { id: string } }) {
               type="button"
               onClick={() => handleQCDecision('APPROVE')}
               disabled={actionLoading}
-              className="btn-success text-xs px-5 py-2.5 flex items-center gap-1.5 shadow"
+              className="btn-success text-xs px-5 py-2.5 flex items-center gap-2 shadow-sm font-semibold"
             >
               <CheckCircle2 className="w-4 h-4" />
-              <span>Approve Correction & Generate Printer File</span>
+              <span>Approve Correction & Generate Profile</span>
             </button>
 
             <button
               type="button"
               onClick={() => handleQCDecision('REJECT')}
               disabled={actionLoading}
-              className="btn-danger text-xs px-4 py-2.5 flex items-center gap-1.5"
+              className="btn-danger text-xs px-4 py-2.5 flex items-center gap-2"
             >
               <XCircle className="w-4 h-4" />
               <span>Reject</span>
@@ -415,7 +412,7 @@ export default function QCApprovalPage({ params }: { params: { id: string } }) {
               type="button"
               onClick={() => handleQCDecision('ESCALATE')}
               disabled={actionLoading}
-              className="btn-warning text-xs px-4 py-2.5 flex items-center gap-1.5"
+              className="btn-warning text-xs px-4 py-2.5 flex items-center gap-2"
             >
               <ShieldAlert className="w-4 h-4" />
               <span>Escalate for Investigation</span>
@@ -426,19 +423,19 @@ export default function QCApprovalPage({ params }: { params: { id: string } }) {
 
       {/* STAGE 2: SIMULATED PRINTER VERIFICATION */}
       {isApproved && !verificationSample && !isEscalated && (
-        <div className="industrial-card p-6 text-center space-y-3 bg-purple-50/60 border-purple-200">
-          <Cpu className="w-8 h-8 text-purple-600 mx-auto" />
-          <h3 className="text-sm font-bold text-purple-950">
+        <div className="serif-card p-8 text-center space-y-3 bg-[#FAF8F5] border-t-2 border-t-[#B8860B]">
+          <Cpu className="w-8 h-8 text-[#B8860B] mx-auto" />
+          <h3 className="font-serif font-bold text-base text-[#1A1A1A]">
             Printer Reference Deployed: {batch.revisedPrinterReference || 'PRINTER-UAE-01-REF-V4'}
           </h3>
-          <p className="text-xs text-purple-800 max-w-md mx-auto">
-            Correction has been applied to the printer queue. Simulate printing and kiln firing of the verification tile to measure post-correction shade compliance.
+          <p className="text-xs text-[#6B6B6B] max-w-md mx-auto font-sans leading-relaxed">
+            Correction applied to printer profile queue. Simulate printing and kiln firing of the verification tile to measure post-correction shade compliance.
           </p>
           <button
             type="button"
             onClick={handleSimulateVerification}
             disabled={actionLoading}
-            className="btn-primary bg-purple-700 hover:bg-purple-600 text-sm px-6 py-2.5 inline-flex items-center gap-2 shadow"
+            className="btn-primary text-xs px-6 py-2.5 inline-flex items-center gap-2 shadow-sm font-semibold mt-2"
           >
             {actionLoading ? (
               <>
@@ -457,51 +454,51 @@ export default function QCApprovalPage({ params }: { params: { id: string } }) {
 
       {/* STAGE 3: BATCH RELEASE DECISION */}
       {verificationSample && !isReleased && (
-        <div className="industrial-card p-5 space-y-4">
-          <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-            <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <FileCheck className="w-4 h-4 text-emerald-600" />
+        <div className="serif-card p-6 space-y-5 border-t-2 border-t-[#2D6A4F]">
+          <div className="flex items-center justify-between border-b border-[#E8E4DF] pb-3">
+            <h3 className="font-serif font-bold text-base text-[#1A1A1A] flex items-center gap-2">
+              <FileCheck className="w-4 h-4 text-[#2D6A4F]" />
               <span>Verification Result Scan</span>
             </h3>
             <span
-              className={`text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${
+              className={`small-caps text-[10px] px-2.5 py-0.5 rounded border ${
                 verificationSample.pass
-                  ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
-                  : 'bg-rose-100 text-rose-800 border-rose-300'
+                  ? 'bg-[#EBF5EE] text-[#2D6A4F] border-[#B7E4C7]'
+                  : 'bg-[#FCECEE] text-[#9B2226] border-[#F5C2C7]'
               }`}
             >
               {verificationSample.pass ? 'VERIFICATION PASS' : 'VERIFICATION FAIL'}
             </span>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-            <div className="bg-slate-50 border border-slate-200 rounded p-2.5">
-              <span className="text-[10px] uppercase font-bold text-slate-400 block">Final ΔE00</span>
-              <span className="text-lg font-bold font-mono text-slate-900 block mt-0.5">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5 text-center">
+            <div className="bg-[#FAF8F5] border border-[#E8E4DF] rounded-md p-3">
+              <span className="small-caps text-[9px] text-[#A39B8E] block">Final ΔE00</span>
+              <span className="text-xl font-serif font-bold text-[#1A1A1A] block mt-0.5">
                 {verificationSample.deltaE00.toFixed(2)}
               </span>
-              <span className="text-[10px] text-slate-500">Tolerance: &lt;= 1.0</span>
+              <span className="text-[10px] text-[#6B6B6B] font-sans">Tolerance: &lt;= 1.0</span>
             </div>
 
-            <div className="bg-slate-50 border border-slate-200 rounded p-2.5">
-              <span className="text-[10px] uppercase font-bold text-slate-400 block">Final ΔGloss</span>
-              <span className="text-lg font-bold font-mono text-slate-900 block mt-0.5">
+            <div className="bg-[#FAF8F5] border border-[#E8E4DF] rounded-md p-3">
+              <span className="small-caps text-[9px] text-[#A39B8E] block">Final ΔGloss</span>
+              <span className="text-xl font-serif font-bold text-[#1A1A1A] block mt-0.5">
                 {verificationSample.deltaGloss > 0 ? `+${verificationSample.deltaGloss.toFixed(1)}` : verificationSample.deltaGloss.toFixed(1)} GU
               </span>
-              <span className="text-[10px] text-slate-500">Tolerance: ±2.0 GU</span>
+              <span className="text-[10px] text-[#6B6B6B] font-sans">Tolerance: ±2.0 GU</span>
             </div>
 
-            <div className="bg-slate-50 border border-slate-200 rounded p-2.5">
-              <span className="text-[10px] uppercase font-bold text-slate-400 block">Correction Loop</span>
-              <span className="text-lg font-bold font-mono text-slate-900 block mt-0.5">
+            <div className="bg-[#FAF8F5] border border-[#E8E4DF] rounded-md p-3">
+              <span className="small-caps text-[9px] text-[#A39B8E] block">Correction Loop</span>
+              <span className="text-xl font-serif font-bold text-[#1A1A1A] block mt-0.5">
                 Loop {batch.currentLoop} / {batch.maxLoops}
               </span>
-              <span className="text-[10px] text-slate-500">Max 2 loops</span>
+              <span className="text-[10px] text-[#6B6B6B] font-sans">Max 2 loops</span>
             </div>
 
-            <div className="bg-slate-50 border border-slate-200 rounded p-2.5">
-              <span className="text-[10px] uppercase font-bold text-slate-400 block">Release Authorization</span>
-              <span className={`text-sm font-bold block mt-1 ${verificationSample.pass ? 'text-emerald-700' : 'text-rose-700'}`}>
+            <div className="bg-[#FAF8F5] border border-[#E8E4DF] rounded-md p-3">
+              <span className="small-caps text-[9px] text-[#A39B8E] block">Release Authorization</span>
+              <span className={`text-sm font-serif font-bold block mt-1 ${verificationSample.pass ? 'text-[#2D6A4F]' : 'text-[#9B2226]'}`}>
                 {verificationSample.pass ? 'PASS (Authorized)' : 'FAIL (Restricted)'}
               </span>
             </div>
@@ -513,7 +510,7 @@ export default function QCApprovalPage({ params }: { params: { id: string } }) {
                 type="button"
                 onClick={handleReleaseBatch}
                 disabled={actionLoading}
-                className="btn-success text-sm px-6 py-2.5 flex items-center gap-2 shadow"
+                className="btn-success text-xs px-6 py-2.5 flex items-center gap-2 shadow-sm font-semibold"
               >
                 <CheckCircle2 className="w-4 h-4" />
                 <span>Release Batch to Production Run</span>

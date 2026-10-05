@@ -1,18 +1,17 @@
 import React from 'react';
-import { AlertCircle, ShieldAlert, Cpu } from 'lucide-react';
+import { Cpu, AlertCircle } from 'lucide-react';
 
 export function HardwareNoticeBanner() {
   return (
-    <div className="bg-amber-500/10 border-b border-amber-500/20 text-amber-900 px-4 py-1.5 text-xs font-medium flex items-center justify-between">
-      <div className="flex items-center gap-2">
-        <Cpu className="w-3.5 h-3.5 text-amber-700 shrink-0" />
+    <div className="bg-[#F5F3F0] border-b border-[#E8E4DF] text-[#6B6B6B] px-6 py-2 text-xs font-sans flex items-center justify-between">
+      <div className="flex items-center gap-2.5">
+        <Cpu className="w-3.5 h-3.5 text-[#B8860B] shrink-0" />
         <span>
-          <strong>Prototype Simulation Mode:</strong> Hardware adapters (Spectrophotometer / Inkjet Printer) are simulated.
-          Calibration responses use synthetic dataset.
+          <strong className="text-[#1A1A1A] font-medium">Prototype Verification Environment:</strong> Hardware adapters (Spectrophotometer & Inkjet Engine) are simulated. Calibration curves generated via synthetic response dataset.
         </span>
       </div>
-      <div className="flex items-center gap-3 text-[11px] text-amber-800">
-        <span className="bg-amber-100 border border-amber-300 rounded px-1.5 py-0.5 font-mono">
+      <div className="flex items-center gap-2">
+        <span className="small-caps text-[10px] text-[#B8860B] bg-white px-2 py-0.5 rounded border border-[#E8E4DF]">
           Demo calibration data — synthetic
         </span>
       </div>

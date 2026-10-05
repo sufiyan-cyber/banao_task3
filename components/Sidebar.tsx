@@ -7,11 +7,9 @@ import {
   LayoutDashboard,
   PlusCircle,
   History,
-  FileCheck,
-  Cpu,
   Clock,
-  ExternalLink,
   ChevronRight,
+  Sparkles,
 } from 'lucide-react';
 
 export function Sidebar() {
@@ -39,69 +37,83 @@ export function Sidebar() {
   ];
 
   return (
-    <aside className="w-64 bg-slate-900 border-r border-slate-800 text-slate-300 flex flex-col justify-between shrink-0 min-h-[calc(100vh-57px)]">
-      <div className="p-4 space-y-6">
-        <div className="space-y-1">
-          <p className="px-3 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-            Workflows
+    <aside className="w-64 bg-[#FAFAF8] border-r border-[#E8E4DF] text-[#1A1A1A] flex flex-col justify-between shrink-0 min-h-[calc(100vh-61px)]">
+      <div className="p-5 space-y-6">
+        <div className="space-y-2">
+          <p className="small-caps text-[10px] text-[#A39B8E] px-3">
+            Atelier Navigation
           </p>
           <nav className="space-y-1">
             {navItems.map((item) => {
               const Icon = item.icon;
-              const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname?.startsWith(item.href));
+              const isActive =
+                pathname === item.href ||
+                (item.href !== '/dashboard' && pathname?.startsWith(item.href));
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors ${
+                  className={`flex items-center gap-3 px-3.5 py-3 rounded-md transition-all duration-200 ${
                     isActive
-                      ? 'bg-blue-600 text-white font-semibold shadow-sm'
-                      : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                      ? 'bg-white border border-[#E8E4DF] border-l-4 border-l-[#B8860B] shadow-sm text-[#1A1A1A]'
+                      : 'text-[#6B6B6B] hover:bg-[#F5F3F0] hover:text-[#1A1A1A]'
                   }`}
                 >
-                  <Icon className="w-4 h-4 shrink-0" />
+                  <Icon
+                    className={`w-4 h-4 shrink-0 ${
+                      isActive ? 'text-[#B8860B]' : 'text-[#A39B8E]'
+                    }`}
+                  />
                   <div className="flex-1 min-w-0">
-                    <div>{item.label}</div>
-                    <div className={`text-[11px] font-normal truncate ${isActive ? 'text-blue-100' : 'text-slate-400'}`}>
+                    <div className="font-serif text-sm font-semibold tracking-tight">
+                      {item.label}
+                    </div>
+                    <div className="text-[11px] font-sans text-[#6B6B6B] truncate">
                       {item.desc}
                     </div>
                   </div>
+                  {isActive && <ChevronRight className="w-3.5 h-3.5 text-[#B8860B]" />}
                 </Link>
               );
             })}
           </nav>
         </div>
 
-        {/* Manufacturing Shift / Time Comparison Info */}
-        <div className="bg-slate-800/80 border border-slate-700/60 rounded-md p-3.5 space-y-2.5">
-          <div className="flex items-center gap-2 text-xs font-semibold text-slate-200">
-            <Clock className="w-3.5 h-3.5 text-blue-400" />
-            <span>Process Velocity</span>
+        {/* Process Velocity Card */}
+        <div className="bg-white border border-[#E8E4DF] rounded-lg p-4 space-y-3 shadow-sm border-t-2 border-t-[#B8860B]">
+          <div className="flex items-center gap-2">
+            <Clock className="w-3.5 h-3.5 text-[#B8860B]" />
+            <span className="small-caps text-[10px] text-[#1A1A1A]">
+              Velocity Benchmark
+            </span>
           </div>
-          <div className="text-xs space-y-1.5">
-            <div className="flex justify-between items-center text-slate-400">
+          <div className="text-xs space-y-2 font-sans">
+            <div className="flex justify-between items-center text-[#6B6B6B]">
               <span>Manual Photoshop cycle:</span>
-              <span className="font-semibold text-rose-400">~6–7 hrs</span>
+              <span className="font-serif font-bold text-[#9B2226]">~6–7 hrs</span>
             </div>
-            <div className="flex justify-between items-center text-slate-400">
-              <span>ShadePilot workflow:</span>
-              <span className="font-semibold text-emerald-400">&lt; 5 mins</span>
+            <div className="flex justify-between items-center text-[#6B6B6B]">
+              <span>ShadePilot closed-loop:</span>
+              <span className="font-serif font-bold text-[#2D6A4F]">&lt; 5 mins</span>
             </div>
           </div>
-          <div className="text-[10px] text-slate-400 border-t border-slate-700/60 pt-2">
-            *Prototype simulation; plant validation required.
+          <div className="h-px bg-[#E8E4DF] my-2" />
+          <div className="text-[10px] text-[#A39B8E] italic">
+            *Prototype simulation; factory calibration required.
           </div>
         </div>
       </div>
 
-      {/* Footer Info */}
-      <div className="p-4 border-t border-slate-800 space-y-2 text-[11px] text-slate-400">
+      {/* Footer Details */}
+      <div className="p-5 border-t border-[#E8E4DF] space-y-2 text-[#6B6B6B]">
         <div className="flex items-center justify-between">
-          <span className="font-semibold text-slate-300">Architecture</span>
-          <span className="text-[10px] bg-slate-800 px-1.5 py-0.5 rounded text-slate-400">v0.1.0</span>
+          <span className="small-caps text-[10px] text-[#1A1A1A]">Architecture</span>
+          <span className="small-caps text-[9px] bg-[#F5F3F0] px-1.5 py-0.5 rounded border border-[#E8E4DF]">
+            v0.1.0
+          </span>
         </div>
-        <p className="text-[10px] text-slate-400 leading-relaxed">
-          Measurement → Color Science → Calibration Optimizer → Jev Decision → QC Approval → Verification.
+        <p className="text-[11px] leading-relaxed text-[#6B6B6B] font-sans">
+          Measurement → Color Science → Calibration Optimizer → Jev Decision → QC Verification.
         </p>
       </div>
     </aside>

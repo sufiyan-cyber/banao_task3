@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sliders, CheckCircle2, ShieldCheck, ArrowRight } from 'lucide-react';
+import { Sliders, ShieldCheck } from 'lucide-react';
 
 export interface DisplayCorrection {
   id?: string;
@@ -41,40 +41,42 @@ export function CandidateCorrectionsTable({
   };
 
   const getChannelColor = (val: number) => {
-    if (val === 0) return 'text-slate-400';
-    return val > 0 ? 'text-blue-700 font-bold' : 'text-slate-800 font-bold';
+    if (val === 0) return 'text-[#A39B8E]';
+    return val > 0 ? 'text-[#B8860B] font-bold' : 'text-[#1A1A1A] font-bold';
   };
 
   return (
-    <div className="industrial-card overflow-hidden">
+    <div className="serif-card overflow-hidden">
       <div className="industrial-header">
-        <div className="flex items-center gap-2">
-          <Sliders className="w-4 h-4 text-slate-700" />
-          <span>Printer Correction Candidates (6-Channel Calibration Model)</span>
+        <div className="flex items-center gap-2.5">
+          <Sliders className="w-4 h-4 text-[#B8860B]" />
+          <span className="font-serif font-semibold text-sm text-[#1A1A1A]">
+            Printer Correction Candidates (6-Channel Calibration Model)
+          </span>
         </div>
-        <span className="text-xs text-slate-500 font-normal">
-          Ranked by multi-objective optimization score
+        <span className="small-caps text-[10px] text-[#6B6B6B]">
+          Multi-objective optimization
         </span>
       </div>
 
       <div className="overflow-x-auto">
         <table className="w-full text-left text-sm border-collapse">
           <thead>
-            <tr className="bg-slate-50 border-b border-slate-200 text-xs text-slate-500 font-medium">
-              <th className="py-2.5 px-3">Rank / Candidate</th>
-              <th className="py-2.5 px-3 text-center">Brown</th>
-              <th className="py-2.5 px-3 text-center">Yellow</th>
-              <th className="py-2.5 px-3 text-center">Black</th>
-              <th className="py-2.5 px-3 text-center">Red</th>
-              <th className="py-2.5 px-3 text-center">Blue</th>
-              <th className="py-2.5 px-3 text-center">Other</th>
-              <th className="py-2.5 px-3 text-center">Pred. ΔE00</th>
-              <th className="py-2.5 px-3 text-center">Pred. ΔGloss</th>
-              <th className="py-2.5 px-3 text-center">Confidence</th>
-              {onSelect && <th className="py-2.5 px-3 text-right">Action</th>}
+            <tr className="bg-[#FAF8F5] border-b border-[#E8E4DF] text-xs text-[#6B6B6B]">
+              <th className="py-3 px-4 font-mono small-caps text-[10px]">Rank / Candidate</th>
+              <th className="py-3 px-3 text-center font-mono small-caps text-[10px]">Brown</th>
+              <th className="py-3 px-3 text-center font-mono small-caps text-[10px]">Yellow</th>
+              <th className="py-3 px-3 text-center font-mono small-caps text-[10px]">Black</th>
+              <th className="py-3 px-3 text-center font-mono small-caps text-[10px]">Red</th>
+              <th className="py-3 px-3 text-center font-mono small-caps text-[10px]">Blue</th>
+              <th className="py-3 px-3 text-center font-mono small-caps text-[10px]">Other</th>
+              <th className="py-3 px-3 text-center font-mono small-caps text-[10px]">Pred. ΔE00</th>
+              <th className="py-3 px-3 text-center font-mono small-caps text-[10px]">Pred. ΔGloss</th>
+              <th className="py-3 px-3 text-center font-mono small-caps text-[10px]">Confidence</th>
+              {onSelect && <th className="py-3 px-4 text-right font-mono small-caps text-[10px]">Action</th>}
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-200 text-slate-700">
+          <tbody className="divide-y divide-[#E8E4DF] text-[#1A1A1A]">
             {candidates.map((c) => {
               const isSelected = selectedId ? c.id === selectedId : c.isRecommended;
               const isPassColor = c.predictedDeltaE00 <= colorTolerance;
@@ -83,58 +85,60 @@ export function CandidateCorrectionsTable({
               return (
                 <tr
                   key={c.id || c.rank}
-                  className={`transition-colors ${
-                    isSelected ? 'bg-blue-50/70 border-l-4 border-l-blue-600' : 'hover:bg-slate-50'
+                  className={`transition-colors cursor-pointer ${
+                    isSelected
+                      ? 'bg-[#FFFDF9] border-l-4 border-l-[#B8860B]'
+                      : 'hover:bg-[#FAF8F5]'
                   }`}
                   onClick={() => onSelect && onSelect(c)}
                 >
-                  <td className="py-3 px-3">
-                    <div className="flex items-center gap-2">
-                      <span className="w-5 h-5 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-xs font-bold font-mono">
+                  <td className="py-3.5 px-4">
+                    <div className="flex items-center gap-2.5">
+                      <span className="w-5 h-5 rounded-full bg-[#FAF8F5] border border-[#E8E4DF] text-[#1A1A1A] flex items-center justify-center text-xs font-serif font-bold">
                         {c.rank}
                       </span>
                       <div>
-                        <div className="font-semibold text-slate-900 flex items-center gap-1.5">
+                        <div className="font-serif font-semibold text-sm text-[#1A1A1A] flex items-center gap-2">
                           <span>{c.label || `Candidate ${c.rank === 1 ? 'A' : c.rank === 2 ? 'B' : 'C'}`}</span>
                           {c.isRecommended && (
-                            <span className="text-[10px] bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold px-1.5 py-0.2 rounded flex items-center gap-0.5">
-                              <ShieldCheck className="w-2.5 h-2.5" />
+                            <span className="small-caps text-[9px] bg-[#FFF8E7] text-[#9D4E00] border border-[#F2D0A4] px-1.5 py-0.2 rounded flex items-center gap-0.5">
+                              <ShieldCheck className="w-2.5 h-2.5 text-[#B8860B]" />
                               Optimal
                             </span>
                           )}
                         </div>
-                        {c.notes && <p className="text-[11px] text-slate-500 line-clamp-1">{c.notes}</p>}
+                        {c.notes && <p className="text-[11px] text-[#6B6B6B] line-clamp-1 italic">{c.notes}</p>}
                       </div>
                     </div>
                   </td>
 
                   {/* 6 Inkjet Channel Adjustments */}
-                  <td className={`py-3 px-3 text-center font-mono text-xs ${getChannelColor(c.brownDelta)}`}>
+                  <td className={`py-3.5 px-3 text-center font-mono text-xs ${getChannelColor(c.brownDelta)}`}>
                     {formatAdj(c.brownDelta)}
                   </td>
-                  <td className={`py-3 px-3 text-center font-mono text-xs ${getChannelColor(c.yellowDelta)}`}>
+                  <td className={`py-3.5 px-3 text-center font-mono text-xs ${getChannelColor(c.yellowDelta)}`}>
                     {formatAdj(c.yellowDelta)}
                   </td>
-                  <td className={`py-3 px-3 text-center font-mono text-xs ${getChannelColor(c.blackDelta)}`}>
+                  <td className={`py-3.5 px-3 text-center font-mono text-xs ${getChannelColor(c.blackDelta)}`}>
                     {formatAdj(c.blackDelta)}
                   </td>
-                  <td className={`py-3 px-3 text-center font-mono text-xs ${getChannelColor(c.redDelta)}`}>
+                  <td className={`py-3.5 px-3 text-center font-mono text-xs ${getChannelColor(c.redDelta)}`}>
                     {formatAdj(c.redDelta)}
                   </td>
-                  <td className={`py-3 px-3 text-center font-mono text-xs ${getChannelColor(c.blueDelta)}`}>
+                  <td className={`py-3.5 px-3 text-center font-mono text-xs ${getChannelColor(c.blueDelta)}`}>
                     {formatAdj(c.blueDelta)}
                   </td>
-                  <td className={`py-3 px-3 text-center font-mono text-xs ${getChannelColor(c.otherDelta)}`}>
+                  <td className={`py-3.5 px-3 text-center font-mono text-xs ${getChannelColor(c.otherDelta)}`}>
                     {formatAdj(c.otherDelta)}
                   </td>
 
                   {/* Predicted ΔE00 */}
-                  <td className="py-3 px-3 text-center">
+                  <td className="py-3.5 px-3 text-center">
                     <span
-                      className={`inline-block px-2 py-0.5 rounded font-mono text-xs font-bold ${
+                      className={`inline-block px-2.5 py-0.5 rounded font-mono text-xs font-bold ${
                         isPassColor
-                          ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
-                          : 'bg-rose-100 text-rose-800 border border-rose-200'
+                          ? 'bg-[#EBF5EE] text-[#2D6A4F] border border-[#B7E4C7]'
+                          : 'bg-[#FCECEE] text-[#9B2226] border border-[#F5C2C7]'
                       }`}
                     >
                       {c.predictedDeltaE00.toFixed(2)}
@@ -142,12 +146,12 @@ export function CandidateCorrectionsTable({
                   </td>
 
                   {/* Predicted ΔGloss */}
-                  <td className="py-3 px-3 text-center">
+                  <td className="py-3.5 px-3 text-center font-mono text-xs text-[#6B6B6B]">
                     <span
-                      className={`inline-block px-2 py-0.5 rounded font-mono text-xs font-medium ${
+                      className={`inline-block px-2 py-0.5 rounded ${
                         isPassGloss
-                          ? 'bg-slate-100 text-slate-800'
-                          : 'bg-amber-100 text-amber-800 border border-amber-200'
+                          ? 'text-[#1A1A1A]'
+                          : 'bg-[#FFF8E7] text-[#9D4E00] border border-[#F2D0A4]'
                       }`}
                     >
                       {c.predictedDeltaGloss > 0 ? `+${c.predictedDeltaGloss.toFixed(1)}` : c.predictedDeltaGloss.toFixed(1)} GU
@@ -155,23 +159,23 @@ export function CandidateCorrectionsTable({
                   </td>
 
                   {/* Confidence */}
-                  <td className="py-3 px-3 text-center font-mono text-xs font-bold text-slate-800">
+                  <td className="py-3.5 px-3 text-center font-mono text-xs font-bold text-[#1A1A1A]">
                     {(c.confidence * 100).toFixed(0)}%
                   </td>
 
                   {/* Selection Button */}
                   {onSelect && (
-                    <td className="py-3 px-3 text-right">
+                    <td className="py-3.5 px-4 text-right">
                       <button
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
                           onSelect(c);
                         }}
-                        className={`text-xs px-2.5 py-1 rounded font-medium transition-colors ${
+                        className={`text-xs px-3 py-1 rounded font-medium transition-all duration-200 ${
                           isSelected
-                            ? 'bg-blue-600 text-white shadow-sm'
-                            : 'bg-white border border-slate-300 text-slate-700 hover:bg-slate-100'
+                            ? 'bg-[#B8860B] text-white shadow-sm font-semibold'
+                            : 'bg-white border border-[#E8E4DF] text-[#1A1A1A] hover:border-[#B8860B] hover:text-[#B8860B]'
                         }`}
                       >
                         {isSelected ? 'Selected' : 'Select'}

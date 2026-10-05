@@ -12,6 +12,7 @@ import {
   Layers,
   Sparkles,
   ArrowRight,
+  Loader2,
 } from 'lucide-react';
 import { CONFIG } from '@/lib/config';
 
@@ -70,6 +71,13 @@ function NewBatchForm() {
       })
       .catch((err) => console.error('Failed to load masters:', err));
   }, []);
+
+  // Automatically trigger demo walkthrough if mode=demo query param is present
+  useEffect(() => {
+    if (searchParams.get('mode') === 'demo') {
+      handle1ClickDemoWalkthrough();
+    }
+  }, [searchParams]);
 
   const availableVersions = masters.filter((m) => m.sku === selectedSku);
   const currentMaster = masters.find((m) => m.id === selectedMasterId);
@@ -227,10 +235,19 @@ function NewBatchForm() {
           type="button"
           onClick={handle1ClickDemoWalkthrough}
           disabled={submitting}
-          className="btn-primary text-xs px-4 py-2.5 flex items-center gap-2 shrink-0 shadow-sm"
+          className="btn-primary text-xs px-4 py-2.5 flex items-center gap-2 shrink-0 shadow-sm disabled:opacity-75 cursor-pointer disabled:cursor-not-allowed"
         >
-          <Play className="w-3.5 h-3.5 fill-current" />
-          <span>Instant Demo Scenario</span>
+          {submitting ? (
+            <>
+              <Loader2 className="w-3.5 h-3.5 animate-spin text-[#B8860B]" />
+              <span>Launching Demo...</span>
+            </>
+          ) : (
+            <>
+              <Play className="w-3.5 h-3.5 fill-current" />
+              <span>Instant Demo Scenario</span>
+            </>
+          )}
         </button>
       </div>
 

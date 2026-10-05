@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Layers, Activity, Database, Play, Sparkles } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Layers, Activity, Database, Play, Sparkles, Loader2 } from 'lucide-react';
 
 interface SystemStatus {
   appName: string;
@@ -13,6 +14,8 @@ interface SystemStatus {
 }
 
 export function Header() {
+  const router = useRouter();
+  const [isLaunching, setIsLaunching] = useState(false);
   const [status, setStatus] = useState<SystemStatus>({
     appName: 'ShadePilot',
     jevAvailable: false,
@@ -27,6 +30,25 @@ export function Header() {
       .then((data) => setStatus(data))
       .catch((err) => console.error('Failed to load system status:', err));
   }, []);
+
+  const handleLaunchDemo = async () => {
+    if (isLaunching) return;
+    setIsLaunching(true);
+    try {
+      const res = await fetch('/api/demo/quick-start', { method: 'POST' });
+      const data = await res.json();
+      if (data.success && data.redirectUrl) {
+        router.push(data.redirectUrl);
+      } else {
+        alert(data.error || 'Failed to initialize demo scenario.');
+        setIsLaunching(false);
+      }
+    } catch (err: any) {
+      console.error('Demo launch failed:', err);
+      alert('Failed to launch demo scenario. Please check console.');
+      setIsLaunching(false);
+    }
+  };
 
   return (
     <header className="bg-white border-b border-[#E8E4DF] text-[#1A1A1A] px-6 lg:px-10 py-3.5 flex items-center justify-between shadow-sm sticky top-0 z-30">
@@ -72,13 +94,25 @@ export function Header() {
         </div>
 
         {/* Quick Launch Demo */}
-        <Link
-          href="/batches/new?mode=demo"
-          className="btn-primary text-xs px-3.5 py-1.5 flex items-center gap-1.5"
+        <button
+          type="button"
+          onClick={handleLaunchDemo}
+          disabled={isLaunching}
+          className="btn-primary text-xs px-3.5 py-1.5 flex items-center gap-1.5 transition-all disabled:opacity-70 cursor-pointer disabled:cursor-not-allowed"
+          title="Instantly generate a demo batch with realistic kiln drift and candidate corrections"
         >
-          <Play className="w-3 h-3 fill-current" />
-          <span>Launch Demo</span>
-        </Link>
+          {isLaunching ? (
+            <>
+              <Loader2 className="w-3 h-3 animate-spin text-[#B8860B]" />
+              <span>Launching...</span>
+            </>
+          ) : (
+            <>
+              <Play className="w-3 h-3 fill-current" />
+              <span>Launch Demo</span>
+            </>
+          )}
+        </button>
       </div>
     </header>
   );

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { prisma } from '@/lib/prisma';
 import { CONFIG } from '@/lib/config';
 import { TimeComparisonCard } from '@/components/TimeComparisonCard';
+import { LaunchDemoButton } from '@/components/LaunchDemoButton';
 import {
   Layers,
   ArrowRight,
@@ -76,13 +77,7 @@ export default async function DashboardPage() {
         </div>
 
         <div className="flex items-center gap-3 shrink-0">
-          <Link
-            href="/batches/new?mode=demo"
-            className="btn-primary text-xs px-4 py-2.5 flex items-center gap-2 shadow-sm"
-          >
-            <Play className="w-3.5 h-3.5 fill-current" />
-            <span>1-Click Demo Scenario</span>
-          </Link>
+          <LaunchDemoButton />
           <Link
             href="/batches/new"
             className="btn-secondary text-xs px-4 py-2.5 flex items-center gap-2"

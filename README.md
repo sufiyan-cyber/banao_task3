@@ -318,38 +318,105 @@ Store secrets in `.env.local`. **Never commit `.env.local` to Git.**
 
 ---
 
-## 16. Local Setup & Installation
+## 16. Local Setup & Evaluator Reproduction Guide
+
+Follow these exact steps to reproduce the ShadePilot prototype on any fresh machine:
 
 ### Prerequisites
-- Node.js v18+ (tested on Node v22)
-- PostgreSQL database (local or Supabase)
+- **Node.js**: v18.0.0+ (tested on Node v20 and v22)
+- **Database**: Either **Docker** (recommended for instant 1-command local Postgres) OR an existing **PostgreSQL / Supabase** instance.
 
-### 1. Clone & Install
+---
+
+### Step 1: Clone Repository & Install Dependencies
 ```bash
 git clone https://github.com/sufiyan-cyber/banao_task3.git
 cd banao_task3
 npm install
 ```
 
-### 2. Configure Environment
-Create `.env.local` in the project root:
+---
+
+### Step 2: Database Setup (Choose Option A or Option B)
+
+#### Option A: 1-Command Local Postgres via Docker (Recommended)
+If you have Docker Desktop or Docker engine installed, start a local database container with:
+```bash
+docker compose up -d
+```
+Then copy the example environment file:
 ```bash
 cp .env.example .env.local
 ```
-Edit `.env.local` and set your `DATABASE_URL`. `TYPESAFE_API_KEY` may be left blank.
+*(The default `.env.example` is already pre-configured to connect to this local Docker PostgreSQL instance: `postgresql://postgres:postgrespassword@localhost:5432/shadepilot`).*
 
-### 3. Initialize Database
-Push the Prisma schema and run the seed script:
+#### Option B: Existing PostgreSQL or Supabase Instance
+If you prefer using an existing database or a hosted Supabase project:
 ```bash
+cp .env.example .env.local
+```
+Open `.env.local` in an editor and set your connection string:
+```bash
+DATABASE_URL="postgresql://<username>:<password>@<host>:<port>/<dbname>"
+```
+*Note: `TYPESAFE_API_KEY` can be left blank. The application will automatically detect this and run in the built-in deterministic rule-based fallback mode.*
+
+---
+
+### Step 3: Initialize Database Schema & Seed Data
+Execute the Prisma migration and seed scripts:
+```bash
+# Push schema tables (masters, batches, measurements, corrections, jev_decisions, audit_logs)
 npm run db:push
+
+# Seed approved master tiles (CER-1001 V1–V3), 600 synthetic calibration rows, and baseline batches
 npm run db:seed
 ```
 
-### 4. Start the Application
+---
+
+### Step 4: Run the Development Server
 ```bash
 npm run dev
 ```
 Open **`http://localhost:3000`** in your browser.
+
+---
+
+### Step 5: Execute Automated Verification Tests (Optional)
+Run the 13 unit tests verifying color science, calibration response models, and safety rules:
+```bash
+npm test
+```
+To verify the production build with zero TypeScript or linting errors:
+```bash
+npm run build
+```
+
+---
+
+### Step 6: 60-Second End-to-End Walkthrough
+Once the application is running at `http://localhost:3000`:
+
+1. **Trigger Demo**: Click **"Launch Demo"** in the top navigation bar (or **"1-Click Demo Scenario"** on the Dashboard).
+2. **Review Shade Analysis (`/analysis/[id]`)**:
+   - Compare the visual tile swatches between the pristine Master Tile and drifted Production Sample.
+   - Inspect the objective error ($\Delta E_{00} = 6.42$, failing tolerance) and directional physical diagnosis.
+   - Click the gold button: **"Proceed to QC Review →"**.
+3. **Perform Human-in-the-Loop QC (`/qc/[id]`)**:
+   - Inspect the Jev decision card (displaying rule-based review status when offline).
+   - Review the 3 candidate corrections. Notice that Candidate A is **not pre-selected**.
+   - Click **"Select"** on **`Candidate A — System Recommended`** (Brown +3.4%, Yellow +0.8%, Black -0.2%).
+   - Click the green button: **"Approve Correction"**.
+4. **Simulate Printer Reference & Process Verification**:
+   - The stage updates to: *"Simulated Printer Reference Updated: PRINTER-UAE-01-REF-V4"*.
+   - Click **"Apply Correction (Simulated)"**.
+5. **Verify & Release**:
+   - The optical scan shows the color error dropped to **$\Delta E_{00} = 0.38$** (well within the $\le 1.0$ limit, **PASS**).
+   - Click **"Release Batch to Production Run"**.
+   - Review the Final Value Screen showing the estimated **6.4 hours saved per changeover**.
+6. **Inspect Traceability Archive (`/history`)**:
+   - Navigate to **Batch History** to inspect the ISO 9001 compliance audit trail and turnaround time charts.
 
 ---
 

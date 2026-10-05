@@ -1,0 +1,136 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Master {
+  id                      String    @id @default(cuid())
+  sku                     String
+  version                 String    // e.g., "V1", "V2", "V3"
+  l                       Float
+  a                       Float
+  b                       Float
+  gloss                   Float
+  deltaETolerance         Float     @default(1.0)
+  glossTolerance          Float     @default(2.0)
+  approved                Boolean   @default(false)
+  approvedBy              String?
+  approvedDate            DateTime?
+  associatedPrinterProfile String?
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+  batches                 Batch[]
+
+  @@unique([sku, version])
+}
+
+model Batch {
+  id                      String        @id @default(cuid())
+  batchNumber             String        @unique
+  sku                     String
+  masterId                String
+  master                  Master        @relation(fields: [masterId], references: [id])
+  printerId               String
+  status                  String        @default("CREATED") // CREATED, SAMPLE_ENTERED, ANALYZED, CORRECTION_GENERATED, QC_REVIEW, QC_APPROVED, QC_REJECTED, VERIFYING, VERIFIED_PASS, VERIFIED_FAIL, RELEASED, ESCALATED
+  currentLoop             Int           @default(1)
+  maxLoops                Int           @default(2)
+  revisedPrinterReference String?
+  createdAt               DateTime      @default(now())
+  completedAt             DateTime?
+  measurements            Measurement[]
+  corrections             Correction[]
+  jevDecisions            JevDecision[]
+  auditLogs               AuditLog[]
+}
+
+model Measurement {
+  id          String   @id @default(cuid())
+  batchId     String
+  batch       Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  type        String   // PRODUCTION_INITIAL, VERIFICATION_SAMPLE
+  iteration   Int      @default(1)
+  l           Float
+  a           Float
+  b           Float
+  gloss       Float
+  deltaL      Float?
+  deltaA      Float?
+  deltaB      Float?
+  deltaE76    Float?
+  deltaE00    Float?
+  deltaGloss  Float?
+  pass        Boolean?
+  createdAt   DateTime @default(now())
+}
+
+model Correction {
+  id                  String   @id @default(cuid())
+  batchId             String
+  batch               Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  iteration           Int      @default(1)
+  rank                Int      @default(1)
+  isRecommended       Boolean  @default(false)
+  brownDelta          Float
+  yellowDelta         Float
+  blackDelta          Float
+  redDelta            Float
+  blueDelta           Float
+  otherDelta          Float
+  predictedDeltaE00   Float
+  predictedDeltaGloss Float
+  predictedGloss      Float?
+  confidence          Float
+  status              String   @default("GENERATED") // GENERATED, APPROVED, REJECTED, APPLIED
+  notes               String?
+  createdAt           DateTime @default(now())
+}
+
+model JevDecision {
+  id                       String   @id @default(cuid())
+  batchId                  String
+  batch                    Batch    @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  iteration                Int      @default(1)
+  decision                 String   // APPROVE_RECOMMENDATION, REQUEST_REVIEW, ESCALATE
+  confidence               Float
+  probabilities            String?  // JSON string
+  model                    String
+  requiresHumanReview      Boolean  @default(true)
+  resolvableByPrinterAlone Boolean  @default(true)
+  explanation              String?
+  rawResponse              String?  // JSON string
+  isFallback               Boolean  @default(false)
+  createdAt                DateTime @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  batchId   String?
+  batch     Batch?   @relation(fields: [batchId], references: [id], onDelete: SetNull)
+  event     String
+  actor     String
+  metadata  String?  // JSON string
+  createdAt DateTime @default(now())
+}
+
+model CalibrationObservation {
+  id          String   @id @default(cuid())
+  printerId   String
+  skuFamily   String
+  brownDelta  Float
+  yellowDelta Float
+  blackDelta  Float
+  redDelta    Float
+  blueDelta   Float
+  otherDelta  Float
+  resultL     Float
+  resultA     Float
+  resultB     Float
+  resultGloss Float
+  isSynthetic Boolean  @default(true)
+  datasetTag  String   @default("Demo calibration data — synthetic")
+  createdAt   DateTime @default(now())
+}

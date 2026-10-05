@@ -26,7 +26,15 @@ yarn-error.log*
 # local env files - CRITICAL: protect secrets
 .env*.local
 .env
+.env.*
 !.env.example
+
+# confidential evaluation & discovery notes
+discovery-call-notes.txt
+*discovery*
+*transcript*
+*confidential*
+*meeting-notes*
 
 # vercel
 .vercel

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ColorSwatch } from '@/components/ColorSwatch';
 import { JevDecisionCard } from '@/components/JevDecisionCard';
+import { CandidateCorrectionsTable } from '@/components/CandidateCorrectionsTable';
 import {
   ShieldCheck,
   CheckCircle2,
@@ -29,6 +30,7 @@ export default function QCApprovalPage({ params }: { params: { id: string } }) {
   const [error, setError] = useState<string | null>(null);
   const [notes, setNotes] = useState('');
   const [releaseSummary, setReleaseSummary] = useState<any>(null);
+  const [selectedCandidateId, setSelectedCandidateId] = useState<string | null>(null);
 
   const loadBatch = async () => {
     try {
@@ -37,6 +39,10 @@ export default function QCApprovalPage({ params }: { params: { id: string } }) {
       const data = await res.json();
       if (data.success && data.batch) {
         setBatch(data.batch);
+        const applied = data.batch.corrections?.find((c: any) => c.status === 'APPLIED');
+        if (applied) {
+          setSelectedCandidateId(applied.id);
+        }
       } else {
         setError(data.error || 'Failed to load batch');
       }
@@ -52,6 +58,10 @@ export default function QCApprovalPage({ params }: { params: { id: string } }) {
   }, [id]);
 
   const handleQCDecision = async (action: 'APPROVE' | 'REJECT' | 'ESCALATE') => {
+    if (action === 'APPROVE' && !selectedCandidateId) {
+      setError('Please select a correction candidate before approving.');
+      return;
+    }
     setActionLoading(true);
     setError(null);
     try {
@@ -60,6 +70,7 @@ export default function QCApprovalPage({ params }: { params: { id: string } }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action,
+          candidateId: selectedCandidateId,
           notes,
           actor: 'QC_OPERATOR_VANCE',
         }),
@@ -255,7 +266,7 @@ export default function QCApprovalPage({ params }: { params: { id: string } }) {
           </div>
 
           <p className="text-xs text-[#6B6B6B] italic text-center font-serif">
-            *Demonstration result based on simulated kiln verification and synthetic response models.
+            *Demonstration result based on simulated process verification and synthetic response models.
           </p>
         </div>
       )}
@@ -268,7 +279,7 @@ export default function QCApprovalPage({ params }: { params: { id: string } }) {
             <span>Batch Escalated to Plant Quality & Process Engineering</span>
           </div>
           <p className="text-xs text-[#9B2226] leading-relaxed font-sans">
-            The shade correction exceeds printer limits or max correction iterations. The batch has been locked. Plant investigations should inspect glaze batch viscosity, raw slip variation, or kiln firing zone temperature curves.
+            The shade correction exceeds printer limits or max correction iterations. The batch has been locked. Plant investigations should inspect glaze batch viscosity, raw slip variation, or thermal firing parameters.
           </p>
         </div>
       )}
@@ -289,14 +300,43 @@ export default function QCApprovalPage({ params }: { params: { id: string } }) {
         />
       </div>
 
-      {/* System Recommendation & Channel Adjustments */}
-      {recommendedCorrection && (
+      {/* Jev Decision Summary */}
+      <JevDecisionCard
+        decision={latestJev}
+        isPrinterCorrectionSufficient={latestJev?.resolvableByPrinterAlone ?? true}
+      />
+
+      {/* 3 Candidate Corrections Table (Human QC Operator Selection) */}
+      {!isApproved && batch.corrections && batch.corrections.length > 0 && (
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="font-serif font-bold text-base text-[#1A1A1A] flex items-center gap-2">
+              <Sliders className="w-4 h-4 text-[#B8860B]" />
+              <span>Correction Candidates (Select to Approve)</span>
+            </h2>
+            <span className="small-caps text-[10px] text-[#A39B8E]">
+              {selectedCandidateId ? '1 Candidate Selected' : 'Explicit Selection Required'}
+            </span>
+          </div>
+
+          <CandidateCorrectionsTable
+            candidates={batch.corrections}
+            selectedId={selectedCandidateId || undefined}
+            onSelect={(c) => setSelectedCandidateId(c.id || null)}
+            colorTolerance={master.deltaETolerance}
+            glossTolerance={master.glossTolerance}
+          />
+        </div>
+      )}
+
+      {/* Applied Correction Summary (Visible after approval) */}
+      {isApproved && recommendedCorrection && (
         <div className="serif-card p-6 space-y-5 border-t-2 border-t-[#B8860B]">
           <div className="flex items-center justify-between border-b border-[#E8E4DF] pb-3">
             <div className="flex items-center gap-2.5">
               <Sliders className="w-4 h-4 text-[#B8860B]" />
               <h2 className="font-serif font-bold text-base text-[#1A1A1A]">
-                Recommended Printer Correction (Calibrated 6-Channel Offsets)
+                Approved Printer Correction (Calibrated 6-Channel Offsets)
               </h2>
             </div>
             <span className="small-caps text-[10px] text-[#6B6B6B]">
@@ -360,18 +400,12 @@ export default function QCApprovalPage({ params }: { params: { id: string } }) {
         </div>
       )}
 
-      {/* Jev Decision Summary */}
-      <JevDecisionCard
-        decision={latestJev}
-        isPrinterCorrectionSufficient={latestJev?.resolvableByPrinterAlone ?? true}
-      />
-
       {/* STAGE 1: QC OPERATOR APPROVAL ACTIONS */}
       {!isApproved && !isEscalated && (
         <div className="serif-card p-6 space-y-4 bg-[#FAF8F5]">
           <h3 className="font-serif font-bold text-base text-[#1A1A1A]">Human QC Approval Action</h3>
           <p className="text-xs text-[#6B6B6B] font-sans">
-            Review the objective recommendation and Jev risk evaluation. Operator decision must be confirmed before printer file generation.
+            Review the objective candidate corrections above and select your approved profile. Operator approval is strictly required before printer profile update.
           </p>
 
           <div>
@@ -391,11 +425,15 @@ export default function QCApprovalPage({ params }: { params: { id: string } }) {
             <button
               type="button"
               onClick={() => handleQCDecision('APPROVE')}
-              disabled={actionLoading}
-              className="btn-success text-xs px-5 py-2.5 flex items-center gap-2 shadow-sm font-semibold"
+              disabled={actionLoading || !selectedCandidateId}
+              className={`text-xs px-5 py-2.5 flex items-center gap-2 shadow-sm font-semibold transition-all ${
+                selectedCandidateId && !actionLoading
+                  ? 'btn-success cursor-pointer'
+                  : 'bg-[#E8E4DF] text-[#8C857B] border border-[#D5D0C8] cursor-not-allowed'
+              }`}
             >
               <CheckCircle2 className="w-4 h-4" />
-              <span>Approve Correction & Generate Profile</span>
+              <span>{selectedCandidateId ? 'Approve Correction' : 'Select a Candidate to Approve'}</span>
             </button>
 
             <button
@@ -426,10 +464,10 @@ export default function QCApprovalPage({ params }: { params: { id: string } }) {
         <div className="serif-card p-8 text-center space-y-3 bg-[#FAF8F5] border-t-2 border-t-[#B8860B]">
           <Cpu className="w-8 h-8 text-[#B8860B] mx-auto" />
           <h3 className="font-serif font-bold text-base text-[#1A1A1A]">
-            Printer Reference Deployed: {batch.revisedPrinterReference || 'PRINTER-UAE-01-REF-V4'}
+            Simulated Printer Reference Updated: {batch.revisedPrinterReference || 'PRINTER-UAE-01-REF-V4'}
           </h3>
           <p className="text-xs text-[#6B6B6B] max-w-md mx-auto font-sans leading-relaxed">
-            Correction applied to printer profile queue. Simulate printing and kiln firing of the verification tile to measure post-correction shade compliance.
+            Simulated printer reference has been updated with the approved channel offsets. Run the simulated verification sample to measure post-correction shade compliance.
           </p>
           <button
             type="button"
@@ -440,12 +478,12 @@ export default function QCApprovalPage({ params }: { params: { id: string } }) {
             {actionLoading ? (
               <>
                 <RefreshCw className="w-4 h-4 animate-spin" />
-                <span>Simulating Kiln Firing & Spectrophotometer Scan...</span>
+                <span>Applying Correction & Simulating Verification Scan...</span>
               </>
             ) : (
               <>
                 <Sparkles className="w-4 h-4" />
-                <span>Simulate Verification Sample</span>
+                <span>Apply Correction (Simulated)</span>
               </>
             )}
           </button>

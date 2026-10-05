@@ -34,11 +34,6 @@ export default function AnalysisPage({ params }: { params: { id: string } }) {
       const data = await res.json();
       if (data.success && data.batch) {
         setBatch(data.batch);
-        if (data.batch.corrections?.length > 0) {
-          const rec =
-            data.batch.corrections.find((c: any) => c.isRecommended) || data.batch.corrections[0];
-          setSelectedCandidate(rec);
-        }
       } else {
         setError(data.error || 'Failed to load batch');
       }
@@ -138,7 +133,7 @@ export default function AnalysisPage({ params }: { params: { id: string } }) {
               href={`/qc/${batch.id}`}
               className="btn-primary text-xs px-4 py-2 flex items-center gap-2 shadow-sm font-semibold"
             >
-              <span>Proceed to QC Approval</span>
+              <span>Proceed to QC Review</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           )}
@@ -295,7 +290,7 @@ export default function AnalysisPage({ params }: { params: { id: string } }) {
               href={`/qc/${batch.id}`}
               className="btn-primary text-xs px-6 py-2.5 flex items-center gap-2 shadow-sm font-semibold"
             >
-              <span>Proceed to QC Approval</span>
+              <span>Proceed to QC Review</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>

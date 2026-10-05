@@ -279,7 +279,7 @@ export function generateCandidateCorrections(
   const rawCandidates: CandidateCorrection[] = [
     {
       rank: 1,
-      label: 'Candidate A (Optimal Balanced)',
+      label: 'Candidate A — System Recommended',
       strategy: 'BALANCED_RECOMMENDED',
       isRecommended: true,
       adjustments: adjA,
@@ -294,7 +294,7 @@ export function generateCandidateCorrections(
     },
     {
       rank: 2,
-      label: 'Candidate B (Gloss-Stabilizing)',
+      label: 'Candidate B — Gloss-Stabilizing',
       strategy: 'GLOSS_PRIORITIZED',
       isRecommended: false,
       adjustments: adjB,
@@ -309,7 +309,7 @@ export function generateCandidateCorrections(
     },
     {
       rank: 3,
-      label: 'Candidate C (Color-Aggressive)',
+      label: 'Candidate C — Color-Prioritized',
       strategy: 'COLOR_PRIORITIZED',
       isRecommended: false,
       adjustments: adjC,

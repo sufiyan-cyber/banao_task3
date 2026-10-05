@@ -99,7 +99,7 @@ export function Header() {
           onClick={handleLaunchDemo}
           disabled={isLaunching}
           className="btn-primary text-xs px-3.5 py-1.5 flex items-center gap-1.5 transition-all disabled:opacity-70 cursor-pointer disabled:cursor-not-allowed"
-          title="Instantly generate a demo batch with realistic kiln drift and candidate corrections"
+          title="Instantly generate a demo batch with realistic production shade drift and candidate corrections"
         >
           {isLaunching ? (
             <>

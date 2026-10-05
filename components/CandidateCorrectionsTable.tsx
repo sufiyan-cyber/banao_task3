@@ -78,7 +78,7 @@ export function CandidateCorrectionsTable({
           </thead>
           <tbody className="divide-y divide-[#E8E4DF] text-[#1A1A1A]">
             {candidates.map((c) => {
-              const isSelected = selectedId ? c.id === selectedId : c.isRecommended;
+              const isSelected = selectedId ? c.id === selectedId : false;
               const isPassColor = c.predictedDeltaE00 <= colorTolerance;
               const isPassGloss = Math.abs(c.predictedDeltaGloss) <= glossTolerance;
 
@@ -99,11 +99,18 @@ export function CandidateCorrectionsTable({
                       </span>
                       <div>
                         <div className="font-serif font-semibold text-sm text-[#1A1A1A] flex items-center gap-2">
-                          <span>{c.label || `Candidate ${c.rank === 1 ? 'A' : c.rank === 2 ? 'B' : 'C'}`}</span>
+                          <span>
+                            {c.label ||
+                              (c.rank === 1
+                                ? 'Candidate A — System Recommended'
+                                : c.rank === 2
+                                ? 'Candidate B — Gloss-Stabilizing'
+                                : 'Candidate C — Color-Prioritized')}
+                          </span>
                           {c.isRecommended && (
-                            <span className="small-caps text-[9px] bg-[#FFF8E7] text-[#9D4E00] border border-[#F2D0A4] px-1.5 py-0.2 rounded flex items-center gap-0.5">
+                            <span className="small-caps text-[9px] bg-[#FFF8E7] text-[#9D4E00] border border-[#F2D0A4] px-1.5 py-0.5 rounded flex items-center gap-0.5 shrink-0">
                               <ShieldCheck className="w-2.5 h-2.5 text-[#B8860B]" />
-                              Optimal
+                              System Recommended
                             </span>
                           )}
                         </div>
@@ -178,7 +185,7 @@ export function CandidateCorrectionsTable({
                             : 'bg-white border border-[#E8E4DF] text-[#1A1A1A] hover:border-[#B8860B] hover:text-[#B8860B]'
                         }`}
                       >
-                        {isSelected ? 'Selected' : 'Select'}
+                        {isSelected ? '✓ Selected' : 'Select'}
                       </button>
                     </td>
                   )}

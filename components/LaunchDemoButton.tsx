@@ -43,7 +43,7 @@ export function LaunchDemoButton({
       onClick={handleLaunch}
       disabled={isLaunching}
       className={`${className} disabled:opacity-75 cursor-pointer disabled:cursor-not-allowed`}
-      title="Instantly generate a production batch with realistic kiln drift and candidate corrections"
+      title="Instantly generate a production batch with realistic production shade drift and candidate corrections"
     >
       {isLaunching ? (
         <>
